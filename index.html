@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SilenTalk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Estilos globales */
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(45deg, #ffabab, #ffabab); /* Colores durazno y rosa */
+      color: #535353;
+    }
+
+  
+    /* Contenedor principal */
+    .container {
+      background-color: #ffd8d8;
+      border-radius: 20px;
+      padding: 30px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      margin: 80px auto;
+      background-color: #ffd8d8;
+      transition: all 0.3s ease;
+    }
+
+    /* Títulos */
+    h1, h2 {
+      font-size: 30px;
+      color: rgb(0, 0, 0); /* Tono durazno */
+      margin-bottom: 20px;
+    }
+
+    /* Área de texto */
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: 15px;
+      font-size: 16px;
+      border: 2px solid #ffd8d8;
+      border-radius: 8px;
+      background-color: #ffd8d8;
+      color: #000000;
+      resize: none;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+
+    textarea:focus {
+      border-color: #ffcff9;
+      outline: none;
+    }
+
+    /* Selector de voz */
+    select, input[type="range"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #e79191;
+      background-color: #e79191;
+      margin-top: 15px;
+      transition: border-color 0.3s ease;
+    }
+
+    select:focus, input[type="range"]:focus {
+      border-color: #ffcff9;
+    }
+
+    /* Botones */
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 20px;
+      font-size: 18px;
+      background-color: #e79191; /* Tono durazno */
+      color: rgb(0, 0, 0);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 5px 10px #c06a6a;
+    }
+
+    button:hover {
+      background-color: #c06a6a; /* Tono más oscuro */
+    }
+
+    /* Sección de frases predeterminadas */
+    .phrases-section {
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+    }
+
+    .phrases-section h3 {
+      color: rgb(0, 0, 0);
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+
+    .phrases {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .phrases button {
+      background-color: #f7f7f7;
+      color: rgb(0, 0, 0);
+      border: 2px solid rgb(0, 0, 0);
+      border-radius: 20px;
+      padding: 12px 20px;
+      margin: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 140px;
+    }
+
+    .phrases button:hover {
+      background-color: #ffcff9;
+      color: rgb(0, 0, 0);
+    }
+
+    /* Pestañas */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    .tab-button {
+      background-color: #ff8686;
+      color: rgb(0, 0, 0);
+      padding: 12px 20px;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      margin: 0 10px;
+      border-radius: 8px;
+    }
+
+    .tab-button:hover {
+      background-color: #c06a6a;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .active-tab {
+      display: block;
+    }
+
+  </style>
+</head>
+<body>
+
+  
+  <!-- Contenido de las pestañas -->
+  <div class="tabs">
+    <button class="tab-button" onclick="showTab('generador')">Modo Predeterminado</button>
+    <button class="tab-button" onclick="showTab('reconocimiento')">Modo Educativo</button>
+  </div>
+
+  <!-- Sección del Generador de Voz -->
+  <div class="container tab-content" id="generador">
+    <h1>SilenTalk</h1>
+    
+    
+    <!-- Área para el texto -->
+    <textarea id="textInput" placeholder="Escribe el texto que quieres que se lea..."></textarea>
+
+    <!-- Selector de voz -->
+    <label for="voiceSelect">Selecciona una voz:</label>
+    <select id="voiceSelect"></select>
+
+    <!-- Controles de velocidad -->
+    <label for="rateRange">Velocidad:</label>
+    <input type="range" id="rateRange" min="0.1" max="2" step="0.1" value="1">
+
+    <!-- Controles de volumen -->
+    <label for="volumeRange">Volumen:</label>
+    <input type="range" id="volumeRange" min="0" max="1" step="0.1" value="1">
+
+    <!-- Botón para generar la voz -->
+    <button onclick="speakText()">Hablar</button>
+
+    <!-- Estado de la reproducción -->
+    <div class="status" id="status"></div>
+
+    <!-- Controles de audio -->
+    <div class="audio-controls">
+      <button onclick="saveAudio()">Guardar Audio</button>
+      <button onclick="clearText()">Limpiar</button>
+    </div>
+
+    <!-- Sección de frases predeterminadas -->
+    <div class="phrases-section">
+      <h3>Saludos</h3>
+      <div class="phrases">
+        <button onclick="addText('Hola')">Hola</button>
+        <button onclick="addText('¿Cómo estás?')">¿Cómo estás?</button>
+        <button onclick="addText('Buenos días')">Buenos días</button>
+        <button onclick="addText('Buenas tardes')">Buenas tardes</button>
+        <button onclick="addText('Buenas noches')">Buenas noches</button>
+      </div>
+    </div>
+
+    <div class="phrases-section">
+      <h3>Frases para Emergencias</h3>
+      <div class="phrases">
+        <button onclick="addText('¡Ayuda!')">¡Ayuda!</button>
+        <button onclick="addText('Necesito asistencia médica')">Necesito asistencia médica</button>
+        <button onclick="addText('¿Dónde está el hospital?')">¿Dónde está el hospital?</button>
+        <button onclick="addText('Llama a la policía')">Llama a la policía</button>
+        <button onclick="addText('Tengo una emergencia')">Tengo una emergencia</button>
+      </div>
+    </div>
+
+    <div class="phrases-section">
+      <h3>Frases para la Escuela</h3>
+      <div class="phrases">
+        <button onclick="addText('¿Dónde está mi aula?')">¿Dónde está mi aula?</button>
+        <button onclick="addText('¿Qué hora es?')">¿Qué hora es?</button>
+        <button onclick="addText('Necesito ayuda con la tarea')">Necesito ayuda con la tarea</button>
+        <button onclick="addText('¿Puedo ir al baño?')">¿Puedo ir al baño?</button>
+        <button onclick="addText('¿Cuándo es el recreo?')">¿Cuándo es el recreo?</button>
+      </div>
+    </div>
+
+    <div class="phrases-section">
+      <h3>Frases para las Compras</h3>
+      <div class="phrases">
+        <button onclick="addText('¿Cuánto cuesta esto?')">¿Cuánto cuesta esto?</button>
+        <button onclick="addText('¿Tienen más colores?')">¿Tienen más colores?</button>
+        <button onclick="addText('¿Me puedes dar un descuento?')">¿Me puedes dar un descuento?</button>
+        <button onclick="addText('Voy a pagar con tarjeta')">Voy a pagar con tarjeta</button>
+        <button onclick="addText('¿Tienes esta talla?')">¿Tienes esta talla?</button>
+      </div>
+    </div>
+
+    <div class="phrases-section">
+      <h3>Frases para Pedir Ayuda en el Día a Día</h3>
+      <div class="phrases">
+        <button onclick="addText('¿Me puedes ayudar?')">¿Me puedes ayudar?</button>
+        <button onclick="addText('¿Dónde está el baño?')">¿Dónde está el baño?</button>
+        <button onclick="addText('Estoy perdido/a')">Estoy perdido/a</button>
+        <button onclick="addText('¿Puedo usar tu teléfono?')">¿Puedo usar tu teléfono?</button>
+        <button onclick="addText('Tengo hambre')">Tengo hambre</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección del Reconocimiento de Voz -->
+  <div class="container tab-content" id="reconocimiento">
+    <h1>Modo Educativo</h1>
+    <img src="https://via.placeholder.com/150?text=Micrófono" alt="Micrófono" />
+    <button onclick="startRecognition()">Iniciar Reconocimiento</button>
+    <div class="response-message" id="responseMessage"></div>
+  </div>
+
+  <script>
+    // Función para cambiar entre pestañas
+    function showTab(tabId) {
+      const tabs = document.querySelectorAll('.tab-content');
+      tabs.forEach(tab => tab.classList.remove('active-tab'));
+      document.getElementById(tabId).classList.add('active-tab');
+    }
+
+    // Función para agregar texto al generador de voz
+    function addText(text) {
+      document.getElementById('textInput').value = text;
+    }
+
+    // Función para generar la voz
+    function speakText() {
+      const text = document.getElementById('textInput').value;
+      const speechSynthesis = window.speechSynthesis;
+      const speech = new SpeechSynthesisUtterance(text);
+      speech.volume = document.getElementById('volumeRange').value;
+      speech.rate = document.getElementById('rateRange').value;
+      speech.voice = speechSynthesis.getVoices()[document.getElementById('voiceSelect').selectedIndex];
+      speechSynthesis.speak(speech);
+    }
+
+    // Verificar compatibilidad con la API de reconocimiento de voz
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+
+    // Configuración del reconocimiento
+    recognition.continuous = true; // Permitir la escucha continua
+    recognition.interimResults = true; // Mostrar resultados parciales mientras se habla
+    recognition.lang = 'es-ES'; // Configurar el idioma para español (puede cambiarse por 'es-MX' si es necesario)
+
+    // Función para iniciar el reconocimiento de voz
+    function startRecognition() {
+      document.getElementById('status').textContent = "Escuchando...";
+
+      recognition.start();
+
+      // Evento cuando se empieza a escuchar
+      recognition.onstart = function () {
+        console.log("Reconocimiento de voz iniciado.");
+        document.getElementById('status').textContent = "Reconociendo voz...";
+      };
+
+      // Evento cuando se obtiene una transcripción
+      recognition.onresult = function (event) {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        document.getElementById('responseMessage').textContent = "Felicidades! Has Dicho: " + transcript;
+      };
+
+      // Evento cuando ocurre un error
+      recognition.onerror = function (event) {
+        document.getElementById('status').textContent = "Error de reconocimiento de voz: " + event.error;
+      };
+
+      // Evento cuando el reconocimiento finaliza
+      recognition.onend = function () {
+        document.getElementById('status').textContent = "Reconocimiento de voz detenido.";
+        console.log("Reconocimiento detenido.");
+      };
+    }
+
+    // Añadir compatibilidad para iOS y dispositivos con Safari
+    if (SpeechRecognition) {
+      console.log("API de reconocimiento de voz soportada");
+    } else {
+      alert("Tu navegador no soporta la API de reconocimiento de voz.");
+    }
+
+
+    
+    // Función para limpiar el campo de texto
+    function clearText() {
+      document.getElementById('textInput').value = '';
+    }
+
+   // Función para obtener las voces disponibles
+  function populateVoiceList() {
+    const voices = speechSynthesis.getVoices();
+    const voiceSelect = document.getElementById('voiceSelect');
+    voiceSelect.innerHTML = ''; // Limpiar el select
+
+    voices.forEach(voice => {
+      const option = document.createElement('option');
+      option.textContent = voice.name;
+      option.setAttribute('data-voice-name', voice.name);
+      voiceSelect.appendChild(option);
+    });
+  }
+
+  // Evento para cargar las voces disponibles
+  speechSynthesis.onvoiceschanged = populateVoiceList;
+
+  // Función para generar la voz
+  function speakText() {
+    const text = document.getElementById('textInput').value;
+    const rate = document.getElementById('rateRange').value;
+    const volume = document.getElementById('volumeRange').value;
+    const voiceSelect = document.getElementById('voiceSelect');
+    const selectedVoice = voiceSelect.options[voiceSelect.selectedIndex].getAttribute('data-voice-name');
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    utterance.rate = rate;
+    utterance.volume = volume;
+
+    // Asignar la voz seleccionada
+    const voices = speechSynthesis.getVoices();
+    for (const voice of voices) {
+      if (voice.name === selectedVoice) {
+        utterance.voice = voice;
+        break;
+      }
+    }
+
+    speechSynthesis.speak(utterance);
+  }
+
+  // Cargar las voces cuando la página se carga
+  window.addEventListener('load', () => {
+    populateVoiceList();
+  });
+
+    // Establecer la pestaña predeterminada al cargar
+    showTab('generador');
+  </script>
+</body>
+</html>
